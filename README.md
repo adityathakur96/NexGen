@@ -1,114 +1,108 @@
-# 🚀 **NEX GEN: Real-Time Sales Forecasting & Analytics Platform**
+# 🚀 **NEX GEN: Real-Time Sales Forecasting & Inventory Replenishment Platform**
 
-Welcome to **NEX GEN** — an advanced, end-to-end, real-time sales and stock prediction system built with the latest in big data, orchestration, and machine learning technologies. This project is designed to tackle real-world retail forecasting challenges and deliver actionable insights through a future-ready **Power BI dashboard** and an interactive **web UI**.
-
----
-
-## 📊 **Project Overview**
-
-**Sales forecasting** is critical for inventory management, revenue planning, and marketing strategies. This project simulates a real-world analytics pipeline capable of:
-
-- **Ingesting data** from SQL Server and both synthetic & real-world (Amazon) sources
-- **Cleaning & transforming data** using Spark & Databricks
-- **Predicting sales/stock trends** with XGBoost, LSTM, and Random Forest models
-- **Orchestrating workflows** using Apache Airflow
-- **Visualizing predictions & KPIs** (Power BI dashboard in progress)
-- **Providing user interaction** via a web UI (planned with FastAPI/Streamlit)
+Welcome to **NEX GEN** — a practical, end-to-end sales forecasting and inventory replenishment system built with PySpark on Databricks, orchestrated with Airflow, and delivered through a full‑stack web interface (React + embedded Streamlit). This repository contains the code and notebooks used to ingest, transform, model, and visualize sales & inventory data for actionable replenishment recommendations.
 
 ---
 
-## 🧱 **Tech Stack**
+## 📊 Project Overview
 
-| **Layer**         | **Technologies**                                      |
-|-------------------|------------------------------------------------------|
-| Data Ingestion    | SQL Server, Synthetic Dataset                        |
-| Data Processing   | Apache Spark, Databricks                             |
-| Orchestration     | Apache Airflow                                       |
-| Modeling          | LSTM (TensorFlow), XGBoost, Random Forest (scikit-learn) |
-| Visualization     | Power BI (planned), AI dashboard tool (temporary)    |
-| Deployment (UI)   | FastAPI / Streamlit (planned)                        |
+Sales forecasting is essential for inventory planning, loss reduction, and improved service levels. NexGen provides:
 
----
-
-## 📂 **Current Progress**
-
-- ✅ **Scalable ETL pipeline implemented** (Apache Spark & Databricks)
-- ✅ **Processed & enriched 10,000+ sales records**
-- ✅ **Trained & validated XGBoost, LSTM, Random Forest models**
-- ✅ **Performance metrics:** MAE ~1.06, RMSE ~1.44
-- ✅ **SQL Server integration** for data storage & retrieval
-- 🛠️ **Ongoing:** Airflow DAGs for workflow automation
-- 🛠️ **Ongoing:** UI design for web dashboard
-- 🟦 **Upcoming:** Power BI dashboard for interactive business insights
+- Ingest transactional and inventory data from SQL Server (via JDBC).  
+- Clean, transform, and feature‑engineer data using PySpark in Databricks notebooks.  
+- Forecast sales and inventory with an XGBoost pipeline (training + inference).  
+- Convert forecasts into replenishment suggestions using inventory logic.  
+- Automate runs with Airflow DAGs (automation in stabilization/testing).  
+- Deliver a React frontend with CSV upload, API integration, and an embedded Streamlit dashboard.  
+- Provide a backend API (FastAPI or Flask) that accepts uploads, triggers prediction runs, and returns results.
 
 ---
 
-## 📊 **Sample Insights (Planned)**
+## 🧱 Tech Stack (actual)
 
-The Power BI dashboard will provide:
-
-- 📅 **Sales Trend Over Time** (line charts)
-- 🥇 **Top-Selling Products** (bar chart)
-- 📦 **Stock Quantity Monitoring**
-- 💰 **Total Revenue & Quantity Sold** (KPI cards)
-- 📈 **Forecast vs. Actual** performance graphs
-
----
-
-## 🧠 **Machine Learning Models**
-
-| **Model**      | **Purpose**                                    | **Framework**   |
-|----------------|------------------------------------------------|-----------------|
-| XGBoost        | Fast, scalable gradient boosting                | xgboost         |
-| LSTM           | Time-series pattern recognition                 | TensorFlow      |
-| Random Forest  | Robust predictions via feature bagging          | scikit-learn    |
-
-All models are evaluated using:
-- **MAE** (Mean Absolute Error)
-- **RMSE** (Root Mean Squared Error)
+| Layer             | Technologies used                                 |
+|-------------------|----------------------------------------------------|
+| Data ingestion    | SQL Server (JDBC)                                  |
+| Data processing   | PySpark, Databricks notebooks                      |
+| Orchestration     | Apache Airflow (DAGs)                              |
+| Modeling          | XGBoost (Python)                                   |
+| Frontend / UI     | ReactJS + Streamlit (embedded in React)            |
+| Backend / API     | FastAPI or Flask                                   |
+| Data analysis     | Pandas, NumPy, Matplotlib, Plotly                  |
 
 ---
 
-## 🗂️ **Dataset**
+## 📂 Current Progress
 
-- **Synthetic Data:** Simulated records for experimentation
-- **Real-World Samples:** Sales data scraped/collected from Amazon listings
-- **Source:** Mixed internal dataset (not publicly shareable)
+- ✅ Built PySpark ETL pipelines as Databricks notebooks.  
+- ✅ Ingested data from SQL Server using JDBC.  
+- ✅ Cleaned, transformed, and processed sales & inventory datasets.  
+- ✅ Implemented primary forecasting pipeline using XGBoost.  
+- ✅ Implemented inventory replenishment logic driven by forecast outputs.  
+- ✅ Developed React frontend with CSV upload and API integration.  
+- ✅ Embedded Streamlit dashboard inside the React frontend for visualization and product‑level forecasts.  
+- ✅ Backend API (FastAPI / Flask) handles uploads, triggers model runs, and returns updated results/files.  
+- 🛠️ Airflow DAGs are created for automation; orchestration and monitoring are being stabilized and tested.
 
 ---
 
-## 🔧 **Project Structure**
+## 📊 Sample Insights (via Streamlit)
+
+The embedded Streamlit dashboard exposes:
+- Sales trends over time (interactive line charts)  
+- Top‑selling products and SKU‑level summaries (bar charts)  
+- Inventory levels and low‑stock alerts (tables + flags)  
+- Product‑level forecasts with downloadable CSV/Parquet output  
+- Forecast vs. historical trend comparison
+
+---
+
+## 🧠 Machine Learning Models
+
+| Model   | Purpose                          | Status      |
+|---------|----------------------------------|-------------|
+| XGBoost | Sales & inventory forecasting    | Implemented |
+
+Evaluation metrics (MAE, RMSE) are computed and logged in the training notebooks.
+
+---
+
+## 🗂️ Dataset
+
+- Source: SQL Server tables (sales, inventory, products, promos).  
+- Local/test: small synthetic/sample datasets provided for development/testing.  
+- Processed features and outputs: stored as parquet files or Databricks tables.
+
+---
+
+## 🔧 Project Structure
 
 ```
-sales-forecasting-pipeline/
-├── data/             # Input datasets
-├── notebooks/        # Databricks notebooks
-├── models/           # ML models & training scripts
-├── airflow_dags/     # DAGs for ETL & prediction workflows
-├── spark_jobs/       # Spark-based transformation scripts
-├── dashboards/       # Power BI/AI dashboard files (in progress)
-├── README.md         # Project overview
+NexGen/
+├── frontend/           # React app (UI + upload components)
+├── streamlit_app/      # Streamlit dashboard (embedded in React)
+├── spark_jobs/         # Databricks notebooks / spark scripts
+├── airflow_dags/       # Airflow DAGs (automation & scheduling)
+├── ml/                 # model artifacts, training utilities
+├── api/                # FastAPI / Flask backend service
+├── data/               # sample datasets / staging
+├── notebooks/          # exploratory & reporting notebooks
+└── README.md
 ```
 
 ---
 
-## 📅 **Roadmap**
+## 📅 Roadmap
 
-- Data collection & preprocessing
-- Model training & evaluation
-- SQL Server integration
-- Spark transformation pipelines
-- Start Airflow integration
-- Complete Airflow DAG orchestration
-- Power BI dashboard integration
-- Web UI development (FastAPI/Streamlit)
+- Stabilize Airflow ↔ Databricks orchestration and monitoring.  
+- Automate model retraining and scheduling with safe triggers and versioning.  
+- Add model artifact tracking or a simple model registry.  
+- Harden the API (validation, authentication, rate limits) and add CI checks.  
+- Containerize services (API, Streamlit) for easier deployment.  
+- Expand inventory optimization rules (business constraints, pack sizes, min/max orders).
 
 ---
 
----
+## 📌 Disclaimer
 
-## 📌 **Disclaimer**
-
-This project uses a mix of synthetic and public sales data and is intended for **educational and prototyping purposes only**. Not intended for commercial deployment at this stage.
-
----
+This repository is intended for experimentation and prototyping. Some sample data may be synthetic or anonymized. Do not use this repository as‑is in production without additional security, testing, and validation.
