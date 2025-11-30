@@ -41,7 +41,7 @@ Sales forecasting is essential for inventory planning, loss reduction, and impro
 - ✅ Implemented inventory replenishment logic driven by forecast outputs.  
 - ✅ Developed React frontend with CSV upload and API integration.  
 - ✅ Embedded Streamlit dashboard inside the React frontend for visualization and product‑level forecasts.  
-- ✅ Backend API (FastAPI / Flask) handles uploads, triggers model runs, and returns updated results/files.  
+- 🛠️ Backend API (FastAPI / Flask) handles uploads, triggers model runs, and returns updated results/files.  
 - 🛠️ Airflow DAGs are created for automation; orchestration and monitoring are being stabilized and tested.
 
 ---
