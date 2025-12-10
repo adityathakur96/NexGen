@@ -8,7 +8,7 @@ Welcome to **NEX GEN** — a practical, end-to-end sales forecasting and invento
 
 Sales forecasting is essential for inventory planning, loss reduction, and improved service levels. NexGen provides:
 
-- Ingest transactional and inventory data from SQL Server (via JDBC).  
+- Ingest transactional and inventory data from Amazon S3 bucket.  
 - Clean, transform, and feature‑engineer data using PySpark in Databricks notebooks.  
 - Forecast sales and inventory with an XGBoost pipeline (training + inference).  
 - Convert forecasts into replenishment suggestions using inventory logic.  
@@ -22,7 +22,7 @@ Sales forecasting is essential for inventory planning, loss reduction, and impro
 
 | Layer             | Technologies used                                 |
 |-------------------|----------------------------------------------------|
-| Data ingestion    | SQL Server (JDBC)                                  |
+| Data ingestion    | Amazon S3                                  |
 | Data processing   | PySpark, Databricks notebooks                      |
 | Orchestration     | Apache Airflow (DAGs)                              |
 | Modeling          | XGBoost (Python)                                   |
