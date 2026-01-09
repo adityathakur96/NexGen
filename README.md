@@ -1,108 +1,77 @@
-# 🚀 **NEX GEN: Real-Time Sales Forecasting & Inventory Replenishment Platform**
+# 🚀 **NEX GEN: Sales Forecasting & Inventory Replenishment Platform**
 
-Welcome to **NEX GEN** — a practical, end-to-end sales forecasting and inventory replenishment system built with PySpark on Databricks, orchestrated with Airflow, and delivered through a full‑stack web interface (React + embedded Streamlit). This repository contains the code and notebooks used to ingest, transform, model, and visualize sales & inventory data for actionable replenishment recommendations.
+Welcome to **NEX GEN** — a practical, end-to-end sales forecasting and inventory replenishment system. This platform leverages **PySpark** for data engineering, **Apache Airflow** for orchestration, and a modern full-stack interface featuring **React** and **FastAPI**.
 
 ---
 
 ## 📊 Project Overview
 
-Sales forecasting is essential for inventory planning, loss reduction, and improved service levels. NexGen provides:
+NexGen transforms raw transactional data into actionable replenishment recommendations through a multi-stage pipeline:
 
-- Ingest transactional and inventory data from Amazon S3 bucket.  
-- Clean, transform, and feature‑engineer data using PySpark in Databricks notebooks.  
-- Forecast sales and inventory with an XGBoost pipeline (training + inference).  
-- Convert forecasts into replenishment suggestions using inventory logic.  
-- Automate runs with Airflow DAGs (automation in stabilization/testing).  
-- Deliver a React frontend with CSV upload, API integration, and an embedded Streamlit dashboard.  
-- Provide a backend API (FastAPI or Flask) that accepts uploads, triggers prediction runs, and returns results.
+- **Data Ingestion**: Automated ingestion from Amazon S3 buckets.
+- **Processing & ETL**: Heavy-duty data cleaning and feature engineering using **PySpark** on a local Spark environment.
+- **Forecasting**: Advanced sales and inventory forecasting using an **XGBoost** pipeline.
+- **Orchestration**: End-to-end automation managed via **Apache Airflow** (running on Docker with Astro CLI).
+- **Web Interface**: A production-grade **React** frontend for visualizing insights, tracking sales trends, and handling CSV uploads via a **FastAPI** backend.
+
+> [!NOTE]  
+> The current implementation processes static datasets from S3, providing a solid foundation for batch analytics and forecasting.
 
 ---
 
-## 🧱 Tech Stack (actual)
+## 🧱 Tech Stack
 
 | Layer             | Technologies used                                 |
 |-------------------|----------------------------------------------------|
-| Data ingestion    | Amazon S3                                  |
-| Data processing   | PySpark, Databricks notebooks                      |
-| Orchestration     | Apache Airflow (DAGs)                              |
-| Modeling          | XGBoost (Python)                                   |
-| Frontend / UI     | ReactJS + Streamlit (embedded in React)            |
-| Backend / API     | FastAPI or Flask                                   |
-| Data analysis     | Pandas, NumPy, Matplotlib, Plotly                  |
+| **Data Storage**  | Amazon S3                                          |
+| **Transformation**| PySpark (Local Setup)                             |
+| **Orchestration** | Apache Airflow (Astro CLI + Docker)               |
+| **Modeling**      | XGBoost (Python)                                   |
+| **Frontend**      | ReactJS + Tailwind CSS                             |
+| **Backend / API** | FastAPI                                            |
 
 ---
 
 ## 📂 Current Progress
 
-- ✅ Built PySpark ETL pipelines as Databricks notebooks.  
-- ✅ Ingested data from SQL Server using JDBC.  
-- ✅ Cleaned, transformed, and processed sales & inventory datasets.  
-- ✅ Implemented primary forecasting pipeline using XGBoost.  
-- ✅ Implemented inventory replenishment logic driven by forecast outputs.  
-- ✅ Developed React frontend with CSV upload and API integration.  
-- ✅ Embedded Streamlit dashboard inside the React frontend for visualization and product‑level forecasts.  
-- 🛠️ Backend API (FastAPI / Flask) handles uploads, triggers model runs, and returns updated results/files.  
-- 🛠️ Airflow DAGs are created for automation; orchestration and monitoring are being stabilized and tested.
-
----
-
-## 📊 Sample Insights (via Streamlit)
-
-The embedded Streamlit dashboard exposes:
-- Sales trends over time (interactive line charts)  
-- Top‑selling products and SKU‑level summaries (bar charts)  
-- Inventory levels and low‑stock alerts (tables + flags)  
-- Product‑level forecasts with downloadable CSV/Parquet output  
-- Forecast vs. historical trend comparison
-
----
-
-## 🧠 Machine Learning Models
-
-| Model   | Purpose                          | Status      |
-|---------|----------------------------------|-------------|
-| XGBoost | Sales & inventory forecasting    | Implemented |
-
-Evaluation metrics (MAE, RMSE) are computed and logged in the training notebooks.
-
----
-
-## 🗂️ Dataset
-
-- Source: SQL Server tables (sales, inventory, products, promos).  
-- Local/test: small synthetic/sample datasets provided for development/testing.  
-- Processed features and outputs: stored as parquet files or Databricks tables.
+- ✅ **PySpark ETL**: Built robust pipelines for cleaning and preparing raw S3 data for modeling.
+- ✅ **Secure Orchestration**: Stabilized Airflow DAGs using Astro CLI, successfully bridging Dockerized Airflow with local Spark workers.
+- ✅ **ML Pipeline**: Implemented forecasting and inventory replenishment logic using XGBoost.
+- ✅ **Modern UI**: Developed a comprehensive React frontend for data visualization and direct S3 interaction through the API.
 
 ---
 
 ## 🔧 Project Structure
 
+The repository is organized into distinct modules for clear separation of concerns:
+
 ```
 NexGen/
-├── frontend/           # React app (UI + upload components)
-├── streamlit_app/      # Streamlit dashboard (embedded in React)
-├── spark_jobs/         # Databricks notebooks / spark scripts
-├── airflow_dags/       # Airflow DAGs (automation & scheduling)
-├── ml/                 # model artifacts, training utilities
-├── api/                # FastAPI / Flask backend service
-├── data/               # sample datasets / staging
-├── notebooks/          # exploratory & reporting notebooks
-└── README.md
+├── Airflow_with_Spark/ # Airflow DAGs, Astro CLI config, and Spark scripts
+├── backend/            # FastAPI backend (API endpoints & S3 services)
+├── frontend/           # React frontend (Sales Dashboard & UI components)
+├── ml model pkl/       # Serialized ML models and artifacts
+├── NexGen_Dataset.csv  # Sample dataset for testing
+└── README.md           # Project documentation
 ```
 
 ---
 
-## 📅 Roadmap
+## 📅 Future Roadmap & Evolution
 
-- Stabilize Airflow ↔ Databricks orchestration and monitoring.  
-- Automate model retraining and scheduling with safe triggers and versioning.  
-- Add model artifact tracking or a simple model registry.  
-- Harden the API (validation, authentication, rate limits) and add CI checks.  
-- Containerize services (API, Streamlit) for easier deployment.  
-- Expand inventory optimization rules (business constraints, pack sizes, min/max orders).
+The vision for NexGen is to evolve from a batch-processing system into a real-time, AI-driven assistant:
+
+- **Real-Time Data Streaming**: Integrate **Apache Kafka** or **Apache Flink** to move from static batch processing to real-time sales updates.
+- **AI-Powered Chat Integration**: Use **n8n automation** to bridge the dashboard with AI chat, allowing users to query their data and predictions in natural language.
+- **Enterprise Scaling**: Transition to **Databricks** for distributed compute at scale as data volume grows.
+- **Automated AI Workflows**: Leverage n8n to connect ML predictions with downstream alerts and business notifications.
+- **Model Registry**: Implement tracking for XGBoost experiment versions and performance metrics.
 
 ---
 
 ## 📌 Disclaimer
 
-This repository is intended for experimentation and prototyping. Some sample data may be synthetic or anonymized. Do not use this repository as‑is in production without additional security, testing, and validation.
+This repository is intended for experimentation and prototyping. Do not use this as-is in production without additional security hardening and validation.
+
+---
+*Developed with ❤️ by Aditya Thakur.*
