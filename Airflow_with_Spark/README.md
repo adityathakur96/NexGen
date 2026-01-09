@@ -1,45 +1,57 @@
-Overview
-========
+# NexGen ETL: Airflow + PySpark + S3
 
-Welcome to Astronomer! This project was generated after you ran 'astro dev init' using the Astronomer CLI. This readme describes the contents of the project, as well as how to run Apache Airflow on your local machine.
+This project implements a robust ETL pipeline for the NexGen Forecaster, bridging local data processing with cloud storage. It demonstrates the integration of **Apache Airflow** (via Astronomer) and **Apache Spark** to handle large-scale data transformations.
 
-Project Contents
-================
+## Technical Architecture
 
-Your Astro project contains the following files and folders:
+The pipeline follows a modern data engineering pattern:
+1. **Extraction**: Discovers new CSV files in the `nexgen-raw-data` S3 bucket.
+2. **Transformation**: Uses **PySpark** on a local Spark setup to perform heavy-duty cleaning and feature engineering.
+3. **Loading**: Writes the processed, high-quality data back to the `nexgen-loading-data` S3 bucket for model training.
 
-- dags: This folder contains the Python files for your Airflow DAGs. By default, this directory includes one example DAG:
-    - `example_astronauts`: This DAG shows a simple ETL pipeline example that queries the list of astronauts currently in space from the Open Notify API and prints a statement for each astronaut. The DAG uses the TaskFlow API to define tasks in Python, and dynamic task mapping to dynamically print a statement for each astronaut. For more on how this DAG works, see our [Getting started tutorial](https://www.astronomer.io/docs/learn/get-started-with-airflow).
-- Dockerfile: This file contains a versioned Astro Runtime Docker image that provides a differentiated Airflow experience. If you want to execute other commands or overrides at runtime, specify them here.
-- include: This folder contains any additional files that you want to include as part of your project. It is empty by default.
-- packages.txt: Install OS-level packages needed for your project by adding them to this file. It is empty by default.
-- requirements.txt: Install Python packages needed for your project by adding them to this file. It is empty by default.
-- plugins: Add custom or community plugins for your project to this file. It is empty by default.
-- airflow_settings.yaml: Use this local-only file to specify Airflow Connections, Variables, and Pools instead of entering them in the Airflow UI as you develop DAGs in this project.
+### The Stack
+- **Astro CLI**: Used for containerized Airflow orchestration.
+- **Docker**: Runs the Airflow Webserver, Scheduler, and Database.
+- **Local Spark**: Integrated with the Airflow Docker container to leverage performance without the cost of heavy EMR clusters.
+- **Boto3 & S3A**: For seamless interaction between the local processing layer and AWS S3.
 
-Deploy Your Project Locally
-===========================
+## Challenges & Struggles (The "Real" Story)
 
-Start Airflow on your local machine by running 'astro dev start'.
+Building this wasn't just about writing code; it was about overcoming several architectural hurdles:
 
-This command will spin up five Docker containers on your machine, each for a different Airflow component:
+### 1. The Docker-to-Local Bridge
+One of the biggest struggles was getting the containerized Airflow (running inside Docker via Astro) to "talk" to the local Spark installation. 
+- **The Solve**: We had to carefully map the `SPARK_HOME` environment variables and ensure the Docker container had the necessary Java and Hadoop cloud jars (`hadoop-aws`, `aws-java-sdk-bundle`) to handle `s3a://` paths.
 
-- Postgres: Airflow's Metadata Database
-- Scheduler: The Airflow component responsible for monitoring and triggering tasks
-- DAG Processor: The Airflow component responsible for parsing DAGs
-- API Server: The Airflow component responsible for serving the Airflow UI and API
-- Triggerer: The Airflow component responsible for triggering deferred tasks
+### 2. S3 Connectivity & Permissions
+Managing AWS credentials securely while enabling Spark to access S3 from a local machine was tricky.
+- **The Solve**: Implemented dynamic credential injection via Airflow Connections, ensuring that `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are passed to `spark-submit` only at runtime, keeping the repository clean and secure.
 
-When all five containers are ready the command will open the browser to the Airflow UI at http://localhost:8080/. You should also be able to access your Postgres Database at 'localhost:5432/postgres' with username 'postgres' and password 'postgres'.
+### 3. Data Consistency (The Watermark Problem)
+Ensuring the same file doesn't get processed twice required a watermark system.
+- **The Solve**: Leveraged **Airflow Variables** to store timestamps of the last successful run, allowing the `discover_files` task to skip already-processed data automatically.
 
-Note: If you already have either of the above ports allocated, you can either [stop your existing Docker containers or change the port](https://www.astronomer.io/docs/astro/cli/troubleshoot-locally#ports-are-not-available-for-my-local-airflow-webserver).
+## Project Contents
 
-Deploy Your Project to Astronomer
-=================================
+- `dags/`: Contains `nexgen_etl_dag.py`, the heart of the orchestration.
+- `include/scripts/`: The heavy lifting scripts for `extract.py`, `transform.py`, and `load.py`.
+- `Dockerfile`: Custom image instructions to include Java and Spark-compatible environments.
+- `requirements.txt`: Python dependencies including `boto3` and AWS-specific libraries.
 
-If you have an Astronomer account, pushing code to a Deployment on Astronomer is simple. For deploying instructions, refer to Astronomer documentation: https://www.astronomer.io/docs/astro/deploy-code/
+## How to Run
 
-Contact
-=======
+1. **Prerequisites**:
+   - Install Astro CLI.
+   - Install Spark 3.5.0 locally.
+   - Configure your `aws_default` connection in the Airflow UI.
 
-The Astronomer CLI is maintained with love by the Astronomer team. To report a bug or suggest a change, reach out to our support.
+2. **Start the Pipeline**:
+   ```bash
+   astro dev start
+   ```
+
+3. **Monitor**:
+   Access the Airflow UI at `http://localhost:8080/` to trigger and monitor the `nexgen_etl_pipeline` DAG.
+
+---
+*Maintained by Aditya Thakur. Part of the NexGen Forecaster ecosystem.*
