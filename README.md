@@ -73,5 +73,4 @@ The vision for NexGen is to evolve from a batch-processing system into a real-ti
 
 This repository is intended for experimentation and prototyping. Do not use this as-is in production without additional security hardening and validation.
 
----
-*Developed with ❤️ by Aditya Thakur.*
+
