@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # JWT settings
-SECRET_KEY = os.getenv("SECRET_KEY", "7b9e1d8f5c3a2b4e6d8f0a1c3e5d7f9b0a1c3e5d7f9b0a1c3e5d7f9b0a1c3e5d")
+SECRET_KEY = os.getenv("SECRET_KEY", "****************************")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 7 days
 
