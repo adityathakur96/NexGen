@@ -15,9 +15,9 @@ The pipeline follows a modern data engineering pattern:
 - **Local Spark**: Integrated with the Airflow Docker container to leverage performance without the cost of heavy EMR clusters.
 - **Boto3 & S3A**: For seamless interaction between the local processing layer and AWS S3.
 
-## Challenges & Struggles (The "Real" Story)
+## Challenges
 
-Building this wasn't just about writing code; it was about overcoming several architectural hurdles:
+Building this was about overcoming several architectural hurdles:
 
 ### 1. The Docker-to-Local Bridge
 One of the biggest struggles was getting the containerized Airflow (running inside Docker via Astro) to "talk" to the local Spark installation. 
@@ -53,5 +53,3 @@ Ensuring the same file doesn't get processed twice required a watermark system.
 3. **Monitor**:
    Access the Airflow UI at `http://localhost:8080/` to trigger and monitor the `nexgen_etl_pipeline` DAG.
 
----
-*Maintained by Aditya Thakur. Part of the NexGen Forecaster ecosystem.*
