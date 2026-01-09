@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from app.models.user import UserCreate, UserLogin, UserResponse, Token
-from app.core.database import get_users_collection
-from app.core.security import (
+from models.user_schemas import UserCreate, UserLogin, UserResponse, Token, ResetPassword
+from core.database import get_users_collection
+from core.security import (
     get_password_hash,
     verify_password,
     create_access_token,
@@ -36,7 +36,7 @@ async def signup(user: UserCreate):
         )
     
     # Create new user
-    user_dict = user.dict()
+    user_dict = user.model_dump()
     user_dict["hashed_password"] = get_password_hash(user_dict.pop("password"))
     user_dict["created_at"] = datetime.utcnow()
     user_dict["is_active"] = True
@@ -82,8 +82,7 @@ async def login(user_credentials: UserLogin):
     
     # Create access token
     access_token = create_access_token(
-        data={"sub": user["email"]},
-        expires_delta=timedelta(minutes=30)
+        data={"sub": user["email"]}
     )
     
     return {"access_token": access_token, "token_type": "bearer"}
@@ -115,3 +114,23 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     user.pop("hashed_password", None)
     
     return UserResponse(**user)
+
+@router.post("/reset-password")
+async def reset_password(data: ResetPassword):
+    """Simple password reset logic"""
+    users_collection = await get_users_collection()
+    
+    user = await users_collection.find_one({"email": data.email})
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    hashed_password = get_password_hash(data.new_password)
+    await users_collection.update_one(
+        {"email": data.email},
+        {"$set": {"hashed_password": hashed_password}}
+    )
+    
+    return {"message": "Password updated successfully"}

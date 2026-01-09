@@ -1,25 +1,21 @@
 # NexGen Backend API
 
-FastAPI backend for the NexGen application with MongoDB integration.
-
-## Features
-
-- User authentication (signup/login)
-- JWT token-based authorization
-- MongoDB for data storage
-- Password hashing with bcrypt
-- CORS enabled for frontend integration
+FastAPI backend service for fetching and processing dashboard data from AWS S3 CSV files.
 
 ## Setup
 
 ### 1. Create Virtual Environment
 
-```bash
-# Windows
+**Windows:**
+```powershell
+cd backend
 python -m venv venv
-venv\Scripts\activate
+.\venv\Scripts\Activate.ps1
+```
 
-# Linux/Mac
+**Linux/Mac:**
+```bash
+cd backend
 python3 -m venv venv
 source venv/bin/activate
 ```
@@ -32,130 +28,110 @@ pip install -r requirements.txt
 
 ### 3. Configure Environment Variables
 
-Copy `.env.example` to `.env` and update the values:
+Copy `.env.example` to `.env` and update with your AWS credentials:
 
 ```bash
 cp .env.example .env
 ```
 
-Update the following variables in `.env`:
-- `MONGODB_URL`: Your MongoDB connection string
-- `DATABASE_NAME`: Database name (default: nexgen_db)
-- `SECRET_KEY`: Strong random secret key for JWT
+Edit `.env` and add your AWS S3 credentials:
+- `AWS_ACCESS_KEY_ID`: Your AWS access key
+- `AWS_SECRET_ACCESS_KEY`: Your AWS secret key
+- `AWS_REGION`: AWS region (default: ap-south-1)
+- `AWS_S3_BUCKET_NAME`: Your S3 bucket name (default: nexgen-loading-data)
+- `AWS_S3_PREFIX`: S3 prefix/folder path (default: load-csv/)
 
-### 4. Run MongoDB
+**Note:** 
+- The service automatically lists all CSV files under the specified prefix
+- It ignores metadata files like `_SUCCESS`, `_committed_*`, etc.
+- It automatically selects the **latest CSV file** based on LastModified timestamp
+- If AWS S3 is not configured, the API will automatically fall back to using the local CSV file (`NexGen_Dataset.csv` in the project root)
 
-Make sure MongoDB is running on your system or use MongoDB Atlas.
+### 4. Run the API Server
 
-Local MongoDB:
 ```bash
-# Windows - MongoDB service should be running
-# Check if MongoDB is running: mongod --version
-
-# Linux/Mac
-sudo systemctl start mongodb
-# or
-brew services start mongodb-community
+python main.py
 ```
 
-### 5. Run the Application
+Or using uvicorn directly:
 
 ```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The API will be available at `http://localhost:8000`
 
 ## API Endpoints
 
-### Authentication
-
-- `POST /api/auth/signup` - Register a new user
-- `POST /api/auth/login` - Login and get access token
-- `GET /api/auth/me` - Get current user info (requires authentication)
-
 ### Health Check
+- `GET /api/health` - Check API health status
 
-- `GET /` - Welcome message
-- `GET /health` - Health check endpoint
+### Dashboard Data
+- `GET /api/dashboard/sales-data` - Get monthly sales data with forecasts
+- `GET /api/dashboard/stats` - Get dashboard statistics (revenue, growth, customers, target)
+- `GET /api/dashboard/all` - Get all dashboard data in one request
 
-## API Documentation
-
-Once the server is running, visit:
+### API Documentation
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## Project Structure
+## Response Formats
 
-```
-backend/
-├── app/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI application
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── config.py        # Configuration settings
-│   │   ├── database.py      # MongoDB connection
-│   │   └── security.py      # JWT and password hashing
-│   ├── models/
-│   │   ├── __init__.py
-│   │   └── user.py          # User models
-│   └── routers/
-│       ├── __init__.py
-│       └── auth.py          # Authentication routes
-├── venv/                    # Virtual environment
-├── .env                     # Environment variables
-├── .env.example            # Example environment variables
-├── .gitignore              # Git ignore file
-├── requirements.txt        # Python dependencies
-└── README.md              # This file
+### Sales Data Response
+```json
+[
+  {
+    "month": "Jan",
+    "sales": 45000.0,
+    "forecast": 47250.0
+  },
+  ...
+]
 ```
 
-## Usage Examples
-
-### Signup
-
-```bash
-curl -X POST "http://localhost:8000/api/auth/signup" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "username": "johndoe",
-    "full_name": "John Doe",
-    "password": "securepassword123"
-  }'
+### Stats Response
+```json
+{
+  "total_revenue": "$324,500",
+  "growth_rate": "23.8%",
+  "active_customers": "1,429",
+  "target_progress": "87%",
+  "revenue_change": "+12.5%",
+  "growth_change": "+4.3%",
+  "customers_change": "+8.2%",
+  "target_change": "+15%"
+}
 ```
 
-### Login
+## S3 CSV File Selection
 
-```bash
-curl -X POST "http://localhost:8000/api/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "password": "securepassword123"
-  }'
-```
+The S3 service automatically:
+- Lists all objects under the configured prefix (`load-csv/` by default)
+- Filters out non-CSV files and metadata files (`_SUCCESS`, `_committed_*`, `_started_*`, `_temporary*`)
+- Selects the latest CSV file based on `LastModified` timestamp
+- Handles multiple CSV files created by Databricks or other ETL processes
+- Falls back to local CSV if S3 is unavailable
 
-### Get Current User
-
-```bash
-curl -X GET "http://localhost:8000/api/auth/me" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
-```
+This means you don't need to hardcode CSV file names - the service will always use the most recent file.
 
 ## Development
 
-To run in development mode with auto-reload:
+The API automatically handles:
+- CORS for frontend integration
+- Automatic latest CSV file selection from S3
+- S3 fallback to local CSV files
+- Error handling and validation
+- Data processing and aggregation
+
+## Testing S3 Service
+
+Test the S3 service functionality:
 
 ```bash
-uvicorn app.main:app --reload
+python test_s3_service.py
 ```
 
-## Security Notes
-
-- Always change the `SECRET_KEY` in production
-- Use strong passwords
-- Enable HTTPS in production
-- Configure proper CORS origins
-- Keep dependencies updated
+This will:
+- List all CSV files in the S3 bucket
+- Show which file is selected as the latest
+- Test fetching the CSV data

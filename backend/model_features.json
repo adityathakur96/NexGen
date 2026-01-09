@@ -1,0 +1,42 @@
+{
+  "Sales": [
+    "unit_price",
+    "is_promotion",
+    "prev_quantity",
+    "lag_2_quantity",
+    "lag_3_quantity",
+    "rolling_mean_quantity",
+    "stock_pressure",
+    "promo_effect",
+    "day_of_week",
+    "month",
+    "is_weekend",
+    "days_since_start",
+    "holiday_name_Christmas",
+    "holiday_name_Diwali",
+    "holiday_name_New Year",
+    "weather_condition_Rainy",
+    "weather_condition_Snowy",
+    "weather_condition_Sunny"
+  ],
+  "Stock": [
+    "unit_price",
+    "is_promotion",
+    "prev_quantity",
+    "lag_2_quantity",
+    "lag_3_quantity",
+    "rolling_mean_quantity",
+    "stock_pressure",
+    "promo_effect",
+    "day_of_week",
+    "month",
+    "is_weekend",
+    "days_since_start",
+    "holiday_name_Christmas",
+    "holiday_name_Diwali",
+    "holiday_name_New Year",
+    "weather_condition_Rainy",
+    "weather_condition_Snowy",
+    "weather_condition_Sunny"
+  ]
+}

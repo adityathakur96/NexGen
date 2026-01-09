@@ -1,8 +1,8 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
-from pydantic_core import core_schema
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, Any
 from datetime import datetime
 from bson import ObjectId
+from pydantic_core import core_schema
 
 class PyObjectId(str):
     @classmethod
@@ -43,30 +43,22 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
-class UserInDB(UserBase):
-    id: Optional[PyObjectId] = Field(default=None, alias="_id")
-    hashed_password: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    is_active: bool = True
-
-    model_config = {
-        "populate_by_name": True,
-        "arbitrary_types_allowed": True,
-        "json_encoders": {ObjectId: str}
-    }
-
 class UserResponse(UserBase):
     id: str
     created_at: datetime
     is_active: bool
 
-    model_config = {
-        "from_attributes": True
-    }
+    class Config:
+        from_attributes = True
+        populate_by_name = True
 
 class Token(BaseModel):
     access_token: str
     token_type: str
 
-class TokenData(BaseModel):
-    email: Optional[str] = None
+class ForgotPassword(BaseModel):
+    email: EmailStr
+
+class ResetPassword(BaseModel):
+    email: EmailStr
+    new_password: str = Field(..., min_length=6)
