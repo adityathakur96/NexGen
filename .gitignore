@@ -13,3 +13,14 @@
 # Local settings
 .DS_Store
 Thumbs.db
+
+# Airflow with Spark
+Airflow_with_Spark/.env
+Airflow_with_Spark/airflow_settings.yaml
+Airflow_with_Spark/.venv/
+Airflow_with_Spark/venv/
+Airflow_with_Spark/__pycache__/
+Airflow_with_Spark/airflow.db
+Airflow_with_Spark/airflow.cfg
+Airflow_with_Spark/spark/
+Airflow_with_Spark/.astro/

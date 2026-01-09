@@ -1,0 +1,7 @@
+services:
+  scheduler:
+    volumes:
+      - ./spark/spark-3.5.0-bin-hadoop3:/opt/spark
+    environment:
+      SPARK_HOME: /opt/spark
+      PATH: /opt/spark/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
